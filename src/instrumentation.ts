@@ -1,11 +1,15 @@
-import * as Sentry from "@sentry/nextjs";
-
-Sentry.init({});
-
 export async function register() {
-  const tracer = await import("dd-trace");
-  tracer.init({
-    logInjection: true,
-    runtimeMetrics: true,
-  });
+  if (process.env.NEXT_RUNTIME !== "edge") {
+    const Sentry = require("@sentry/nextjs");
+
+    Sentry.init({
+      debug: false,
+    });
+
+    const tracer = require("dd-trace");
+    tracer.init({
+      logInjection: true,
+      runtimeMetrics: true,
+    });
+  }
 }
